@@ -190,7 +190,7 @@ def _visual_flow():
     """function to create entry tagui flow with visual automation"""
     flow_text = '// VISUAL ENTRY FLOW FOR RPA FOR PYTHON ~ TEBEL.ORG\r\n' + \
                 '// mouse_xy() - dummy trigger for SikuliX integration\r\n\r\nlive'
-    flow_file = _py23_open('rpa_python.tag'', 'w')
+    flow_file = _py23_open('rpa_python.tag', 'w')
     flow_file.write(_py23_write(flow_text))
     flow_file.close()
 
