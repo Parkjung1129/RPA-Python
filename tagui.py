@@ -433,7 +433,7 @@ def setup():
 
     return True
 
-def init(visual_automation = False, chrome_browser = True, headless_mode = False, turbo_mode = True):
+def init(visual_automation = False, chrome_browser = False, headless_mode = True, turbo_mode = True):
     """start and connect to tagui process by checking tagui live mode readiness"""
 
     global _process, _tagui_started, _tagui_id, _tagui_visual, _tagui_chrome, _tagui_init_directory, _tagui_download_directory
@@ -510,7 +510,7 @@ def init(visual_automation = False, chrome_browser = True, headless_mode = False
     if chrome_browser:
         browser_option = 'chrome'
     if headless_mode:
-        browser_option = 'headless'
+        browser_option = '-h'
 
     # special handling for turbo mode to run 10X faster
     tagui_chrome_php = tagui_directory + '/' + 'src' + '/' + 'tagui_chrome.php'
