@@ -40,13 +40,16 @@ _tagui_init_directory = ''
 # to track file download directory for web browser
 _tagui_download_directory = ''
 
+# configure tagui download Git Branch
+_git_branch="feature/docker_ver"
+
 # to track location of TagUI (default user home folder)
 if platform.system() == 'Windows':
     _tagui_location = os.environ['APPDATA']
 else:
     _tagui_location = os.path.expanduser('~')
- 
-# delete tagui temp output text file to avoid reading old data 
+
+# delete tagui temp output text file to avoid reading old data
 if os.path.isfile('rpa_python.txt'): os.remove('rpa_python.txt')
 
 # define local custom javascript functions for use in tagui
@@ -107,7 +110,7 @@ def _py23_open(target_filename, target_mode = 'r'):
     if _python2_env():
         return io.open(target_filename, target_mode, encoding = 'utf-8')
     else:
-        return open(target_filename, target_mode, encoding = 'utf-8') 
+        return open(target_filename, target_mode, encoding = 'utf-8')
 
 def _py23_read(input_text = None):
     """function for python 2 and 3 read utf-8 compatibility handling"""
@@ -141,7 +144,7 @@ def _tagui_output():
     # sleep to not splurge cpu cycles in while loop
     while not os.path.isfile('rpa_python.txt'):
         if os.path.isfile(init_directory_output_file): break
-        time.sleep(_tagui_delay) 
+        time.sleep(_tagui_delay)
 
     # roundabout implementation to ensure backward compatibility
     if os.path.isfile('rpa_python.txt'):
@@ -179,7 +182,7 @@ def _chrome():
 def _python_flow():
     """function to create entry tagui flow without visual automation"""
     flow_text = '// NORMAL ENTRY FLOW FOR RPA FOR PYTHON ~ TEBEL.ORG\r\n\r\nlive'
-    flow_file = _py23_open('rpa_python', 'w')
+    flow_file = _py23_open('rpa_python.tag', 'w')
     flow_file.write(_py23_write(flow_text))
     flow_file.close()
 
@@ -187,7 +190,7 @@ def _visual_flow():
     """function to create entry tagui flow with visual automation"""
     flow_text = '// VISUAL ENTRY FLOW FOR RPA FOR PYTHON ~ TEBEL.ORG\r\n' + \
                 '// mouse_xy() - dummy trigger for SikuliX integration\r\n\r\nlive'
-    flow_file = _py23_open('rpa_python', 'w')
+    flow_file = _py23_open('rpa_python.tag'', 'w')
     flow_file.write(_py23_write(flow_text))
     flow_file.close()
 
@@ -206,11 +209,12 @@ def _tagui_delta(base_directory = None):
     if os.path.isfile(base_directory + '/' + 'rpa_python_' + __version__): return True
 
     # define list of key tagui files to be downloaded and synced locally
-    delta_list = ['tagui', 'tagui.cmd', 'end_processes', 'end_processes.cmd', 
+    delta_list = ['tagui', 'tagui.cmd', 'end_processes', 'end_processes.cmd',
                     'tagui_header.js', 'tagui_parse.php', 'tagui.sikuli/tagui.py']
 
     for delta_file in delta_list:
-        tagui_delta_url = 'https://raw.githubusercontent.com/tebelorg/Tump/master/TagUI-Python/' + delta_file
+#         tagui_delta_url = 'https://raw.githubusercontent.com/tebelorg/Tump/master/TagUI-Python/' + delta_file
+        tagui_delta_url = 'https://raw.githubusercontent.com/Parkjung1129/TagUI/master/src/tagui' + delta_file
         tagui_delta_file = base_directory + '/' + 'src' + '/' + delta_file
         if not download(tagui_delta_url, tagui_delta_file): return False
 
@@ -300,16 +304,16 @@ def setup():
     else:
         print('[RPA][ERROR] - unknown ' + platform.system() + ' operating system to setup TagUI')
         return False
-    
+
     if not os.path.isfile('rpa_python.zip'):
         # primary installation pathway by downloading from internet, requiring internet access
         print('[RPA][INFO] - downloading TagUI (~200MB) and unzipping to below folder...')
         print('[RPA][INFO] - ' + home_directory)
 
         # set tagui zip download url and download zip for respective operating systems
-        tagui_zip_url = 'https://github.com/tebelorg/Tump/releases/download/v1.0.0/' + tagui_zip_file 
+        tagui_zip_url = 'https://github.com/tebelorg/Tump/releases/download/v1.0.0/' + tagui_zip_file
         if not download(tagui_zip_url, home_directory + '/' + tagui_zip_file):
-            # error message is shown by download(), no need for message here 
+            # error message is shown by download(), no need for message here
             return False
 
         # unzip downloaded zip file to user home folder
@@ -340,7 +344,7 @@ def setup():
 
         # overwrite tagui to .tagui folder for Linux / macOS
 
-        # first rename existing .tagui folder to .tagui_previous 
+        # first rename existing .tagui folder to .tagui_previous
         if os.path.isdir(tagui_directory):
             os.rename(tagui_directory, tagui_directory + '_previous')
 
@@ -352,7 +356,7 @@ def setup():
             import shutil
             shutil.rmtree(tagui_directory + '_previous')
 
-    # after unzip, remove downloaded zip file to save disk space 
+    # after unzip, remove downloaded zip file to save disk space
     if os.path.isfile(home_directory + '/' + tagui_zip_file):
         os.remove(home_directory + '/' + tagui_zip_file)
 
@@ -367,7 +371,7 @@ def setup():
         # and update delta tagui/src/tagui with execute permission
         if os.system('chmod -R 755 "' + tagui_directory + '" > /dev/null 2>&1') != 0:
             print('[RPA][ERROR] - unable to set permissions for .tagui folder')
-            return False 
+            return False
 
         # check that php, a dependency for tagui, is installed and working
         if os.system('php --version > /dev/null 2>&1') != 0:
@@ -412,7 +416,7 @@ def setup():
 
             # run setup to install the MSVCR110.dll dependency (user action required)
             os.system('"' + tagui_directory + '/vcredist_x86.exe"')
-                
+
             # check again if tagui packaged php is working, after installing vcredist_x86.exe
             if os.system('"' + tagui_directory + '/' + 'src' + '/' + 'php/php.exe" -v > nul 2>&1') != 0:
                 print('[RPA][INFO] - MSVCR110.dll is still missing, install vcredist_x86.exe from')
@@ -490,7 +494,7 @@ def init(visual_automation = False, chrome_browser = True, headless_mode = False
                 print('[RPA][INFO] - OpenJDK is preferred over Java JDK which is free for non-commercial use only')
                 return False
             else:
-                # start a dummy first run if never run before, to let sikulix integrate jython 
+                # start a dummy first run if never run before, to let sikulix integrate jython
                 sikulix_folder = tagui_directory + '/' + 'src' + '/' + 'sikulix'
                 if os.path.isfile(sikulix_folder + '/' + 'jython-standalone-2.7.1.jar'):
                     os.system('java -jar "' + sikulix_folder + '/' + 'sikulix.jar" -h ' + shell_silencer)
@@ -522,7 +526,7 @@ def init(visual_automation = False, chrome_browser = True, headless_mode = False
         dump(load(tagui_sikuli_py).replace('scan_period = 0.5', 'scan_period = 0.05\n\n# teleport mouse instead of moving to target\nSettings.MoveMouseDelay = 0'), tagui_sikuli_py)
 
     # entry shell command to invoke tagui process
-    tagui_cmd = '"' + tagui_executable + '"' + ' rpa_python ' + browser_option
+    tagui_cmd = '"' + tagui_executable + '"' + ' rpa_python.tag ' + browser_option
 
     # run tagui end processes script to flush dead processes
     # for eg execution ended with ctrl+c or forget to close()
@@ -575,7 +579,7 @@ def init(visual_automation = False, chrome_browser = True, headless_mode = False
                     return False
 
                 # remove generated tagui flow, js code and custom functions files
-                if os.path.isfile('rpa_python'): os.remove('rpa_python')
+                if os.path.isfile('rpa_python.tag'): os.remove('rpa_python.tag')
                 if os.path.isfile('rpa_python.js'): os.remove('rpa_python.js')
                 if os.path.isfile('rpa_python.raw'): os.remove('rpa_python.raw')
                 if os.path.isfile('tagui_local.js'): os.remove('tagui_local.js')
@@ -586,7 +590,7 @@ def init(visual_automation = False, chrome_browser = True, headless_mode = False
                 # set variable to track original directory when init() was called
                 _tagui_init_directory = os.getcwd()
 
-                # set variable to track file download directory for web browser 
+                # set variable to track file download directory for web browser
                 _tagui_download_directory = os.getcwd()
 
                 return True
@@ -618,7 +622,7 @@ def pack():
     # next download jython to tagui/src/sikulix folder (after init() it can be moved away)
     if platform.system() == 'Windows':
         tagui_directory = tagui_location() + '/' + 'tagui'
-        # pack in Visual C++ MSVCR110.dll dependency from PHP for offline installation 
+        # pack in Visual C++ MSVCR110.dll dependency from PHP for offline installation
         vcredist_x86_url = 'https://raw.githubusercontent.com/tebelorg/Tump/master/vcredist_x86.exe'
         if not download(vcredist_x86_url, tagui_directory + '/vcredist_x86.exe'):
             return False
@@ -809,7 +813,7 @@ def send(tagui_instruction = None):
         # escape backslash to display source string correctly after echoing
         echo_safe_instruction = tagui_instruction.replace('\\','\\\\')
 
-        # escape double quote because echo step below uses double quotes 
+        # escape double quote because echo step below uses double quotes
         echo_safe_instruction = echo_safe_instruction.replace('"','\\"')
 
         # echo live mode instruction, after preparing string to be echo-safe
@@ -863,26 +867,26 @@ def close():
         while _process.poll() is None: pass
 
         # remove again generated tagui flow, js code and custom functions files
-        if os.path.isfile('rpa_python'): os.remove('rpa_python')
+        if os.path.isfile('rpa_python.tag'): os.remove('rpa_python.tag')
         if os.path.isfile('rpa_python.js'): os.remove('rpa_python.js')
         if os.path.isfile('rpa_python.raw'): os.remove('rpa_python.raw')
         if os.path.isfile('tagui_local.js'): os.remove('tagui_local.js')
 
         # to handle user changing current directory after init() is called
-        if os.path.isfile(os.path.join(_tagui_init_directory, 'rpa_python')):
-            os.remove(os.path.join(_tagui_init_directory, 'rpa_python'))
+        if os.path.isfile(os.path.join(_tagui_init_directory, 'rpa_python.tag')):
+            os.remove(os.path.join(_tagui_init_directory, 'rpa_python.tag'))
         if os.path.isfile(os.path.join(_tagui_init_directory, 'rpa_python.js')):
             os.remove(os.path.join(_tagui_init_directory, 'rpa_python.js'))
         if os.path.isfile(os.path.join(_tagui_init_directory, 'rpa_python.raw')):
             os.remove(os.path.join(_tagui_init_directory, 'rpa_python.raw'))
         if os.path.isfile(os.path.join(_tagui_init_directory, 'tagui_local.js')):
-            os.remove(os.path.join(_tagui_init_directory, 'tagui_local.js'))   
+            os.remove(os.path.join(_tagui_init_directory, 'tagui_local.js'))
 
         # remove generated tagui log and data files if not in debug mode
         if not debug():
             if os.path.isfile('rpa_python.log'): os.remove('rpa_python.log')
             if os.path.isfile('rpa_python.txt'): os.remove('rpa_python.txt')
-        
+
             # to handle user changing current directory after init() is called
             if os.path.isfile(os.path.join(_tagui_init_directory, 'rpa_python.log')):
                 os.remove(os.path.join(_tagui_init_directory, 'rpa_python.log'))
@@ -950,7 +954,7 @@ def url(webpage_url = None):
         return False
 
     if webpage_url is not None and webpage_url != '':
-        if webpage_url.lower().startswith('www.'): webpage_url = 'https://' + webpage_url 
+        if webpage_url.lower().startswith('www.'): webpage_url = 'https://' + webpage_url
         if webpage_url.startswith('http://') or webpage_url.startswith('https://'):
             if not send(_esq(webpage_url)):
                 return False
@@ -1100,7 +1104,7 @@ def select(element_identifier = None, option_value = None, test_coordinate1 = No
     if test_coordinate1 is not None and test_coordinate2 is not None and \
     isinstance(option_value, int) and isinstance(test_coordinate2, int):
         element_identifier = coord(element_identifier, option_value)
-        option_value = coord(test_coordinate1, test_coordinate2) 
+        option_value = coord(test_coordinate1, test_coordinate2)
 
     # pre-emptive checks if image files are specified for visual automation
     if element_identifier.lower().endswith('.png') or element_identifier.lower().endswith('.bmp'):
@@ -1487,7 +1491,7 @@ def popup(string_in_url = None):
     if string_in_url is None or string_in_url == '':
         return True
 
-    # set webpage context to the popup tab specified, by sending custom tagui javascript code 
+    # set webpage context to the popup tab specified, by sending custom tagui javascript code
     send('js found_targetid = ""; chrome_targets = []; ws_message = chrome_step("Target.getTargets", {});')
     send('js try {ws_json = JSON.parse(ws_message); if (ws_json.result.targetInfos) chrome_targets = ws_json.result.targetInfos; else chrome_targets = [];} catch (e) {chrome_targets = [];}')
     send('js chrome_targets.forEach(function(target) {if (target.url.indexOf("' + string_in_url + '") !== -1) found_targetid = target.targetId;})')
@@ -1559,7 +1563,7 @@ def vision(command_to_run = None):
         return False
 
     else:
-        return True  
+        return True
 
 def timeout(timeout_in_seconds = None):
     if not _started():
