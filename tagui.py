@@ -41,7 +41,7 @@ _tagui_init_directory = ''
 _tagui_download_directory = ''
 
 # configure tagui download Git Branch
-_git_branch="feature/docker_ver"
+_git_branch="featrue/docker_ver"
 
 # to track location of TagUI (default user home folder)
 if platform.system() == 'Windows':
@@ -214,7 +214,7 @@ def _tagui_delta(base_directory = None):
 
     for delta_file in delta_list:
 #         tagui_delta_url = 'https://raw.githubusercontent.com/tebelorg/Tump/master/TagUI-Python/' + delta_file
-        tagui_delta_url = 'https://raw.githubusercontent.com/Parkjung1129/TagUI/'+ _git_branch +'/src/tagui' + delta_file
+        tagui_delta_url = 'https://raw.githubusercontent.com/Parkjung1129/TagUI/'+ _git_branch +'/src/' + delta_file
         tagui_delta_file = base_directory + '/' + 'src' + '/' + delta_file
         if not download(tagui_delta_url, tagui_delta_file): return False
 
