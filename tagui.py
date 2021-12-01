@@ -433,7 +433,7 @@ def setup():
 
     return True
 
-def init(visual_automation = False, chrome_browser = False, headless_mode = True, turbo_mode = True):
+def init(visual_automation = False, chrome_browser = True, headless_mode = True, turbo_mode = True):
     """start and connect to tagui process by checking tagui live mode readiness"""
 
     global _process, _tagui_started, _tagui_id, _tagui_visual, _tagui_chrome, _tagui_init_directory, _tagui_download_directory
@@ -506,11 +506,8 @@ def init(visual_automation = False, chrome_browser = False, headless_mode = True
     _tagui_local()
 
     # invoke web browser accordingly with tagui option
-    browser_option = ''
-    if chrome_browser:
-        browser_option = 'chrome'
-    if headless_mode:
-        browser_option = '-h'
+    # Docker Mode..
+    browser_option = '-h'
 
     # special handling for turbo mode to run 10X faster
     tagui_chrome_php = tagui_directory + '/' + 'src' + '/' + 'tagui_chrome.php'
@@ -940,7 +937,7 @@ def exist(element_identifier = None):
 
     send('exist_result = exist(\'' + _sdq(element_identifier) + '\')')
     send('dump [`exist_result`] to rpa_python.txt')
-    if _tagui_output() == 'true':
+    if 'true' in _tagui_output():
         return True
     else:
         return False
@@ -1149,7 +1146,7 @@ def read(element_identifier = None, test_coordinate1 = None, test_coordinate2 = 
 
     else:
         send('read ' + _sdq(element_identifier) + ' to read_result')
-        send('dump read_result to rpa_python.txt')
+        send('dump [`read_result`] to rpa_python.txt')
         read_result = _tagui_output()
         return read_result
 
@@ -1500,7 +1497,7 @@ def popup(string_in_url = None):
     send('js chrome_targetid = found_targetid')
 
     # check if chrome_targetid is successfully set to sessionid of popup tab
-    send('dump chrome_targetid to rpa_python.txt')
+    send('dump [`chrome_targetid`] to rpa_python.txt')
     popup_result = _tagui_output()
     if popup_result != '':
         return True
@@ -1618,7 +1615,7 @@ def present(element_identifier = None):
                     return False
 
     send('present_result = present(\'' + _sdq(element_identifier) + '\').toString()')
-    send('dump present_result to rpa_python.txt')
+    send('dump [`present_result`] to rpa_python.txt')
     if _tagui_output() == 'true':
         return True
     else:
@@ -1637,7 +1634,7 @@ def count(element_identifier = None):
         return int(0)
 
     send('count_result = count(\'' + _sdq(element_identifier) + '\').toString()')
-    send('dump count_result to rpa_python.txt')
+    send('dump [`count_result`] to rpa_python.txt')
     return int(_tagui_output())
 
 def title():
