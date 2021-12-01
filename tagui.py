@@ -769,7 +769,8 @@ def _ready():
             sys.stdout.write(tagui_out); sys.stdout.flush()
 
         # check if tagui live mode is listening for inputs and return result
-        if tagui_out.strip().startswith('[RPA][') and tagui_out.strip().endswith('] - listening for inputs'):
+#         if tagui_out.strip().startswith('[RPA][') and tagui_out.strip().endswith('] - listening for inputs'):
+        if 'listening for inputs' in tagui_out:
             return True
         else:
             return False
