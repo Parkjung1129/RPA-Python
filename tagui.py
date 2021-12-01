@@ -214,7 +214,7 @@ def _tagui_delta(base_directory = None):
 
     for delta_file in delta_list:
 #         tagui_delta_url = 'https://raw.githubusercontent.com/tebelorg/Tump/master/TagUI-Python/' + delta_file
-        tagui_delta_url = 'https://raw.githubusercontent.com/Parkjung1129/TagUI/master/src/tagui' + delta_file
+        tagui_delta_url = 'https://raw.githubusercontent.com/Parkjung1129/TagUI/'+ _git_branch +'/src/tagui' + delta_file
         tagui_delta_file = base_directory + '/' + 'src' + '/' + delta_file
         if not download(tagui_delta_url, tagui_delta_file): return False
 
@@ -433,7 +433,7 @@ def setup():
 
     return True
 
-def init(visual_automation = False, chrome_browser = True, headless_mode = False, turbo_mode = False):
+def init(visual_automation = False, chrome_browser = True, headless_mode = False, turbo_mode = True):
     """start and connect to tagui process by checking tagui live mode readiness"""
 
     global _process, _tagui_started, _tagui_id, _tagui_visual, _tagui_chrome, _tagui_init_directory, _tagui_download_directory
@@ -653,7 +653,7 @@ def update():
     if not os.path.isdir('rpa_update'): os.mkdir('rpa_update')
     if not os.path.isdir('rpa_update/tagui.sikuli'): os.mkdir('rpa_update/tagui.sikuli')
 
-    rpa_python_url = 'https://raw.githubusercontent.com/tebelorg/RPA-Python/master/tagui.py'
+    rpa_python_url = 'https://raw.githubusercontent.com/tebelorg/RPA-Python/' + _git_branch + '/tagui.py'
     if not download(rpa_python_url, 'rpa_update' + '/' + 'rpa.py'): return False
 
     # get version number of latest release for the package to use in generated update.py
@@ -666,7 +666,7 @@ def update():
                     'tagui_header.js', 'tagui_parse.php', 'tagui.sikuli/tagui.py']
 
     for delta_file in delta_list:
-        tagui_delta_url = 'https://raw.githubusercontent.com/tebelorg/Tump/master/TagUI-Python/' + delta_file
+        tagui_delta_url = 'https://raw.githubusercontent.com/tebelorg/Tump/' + _git_branch + '/TagUI-Python/' + delta_file
         tagui_delta_file = 'rpa_update' + '/' + delta_file
         if not download(tagui_delta_url, tagui_delta_file): return False
 
